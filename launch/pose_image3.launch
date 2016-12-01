@@ -1,0 +1,59 @@
+<launch>
+<node  pkg="image_view" type="image_view" name="imageshow" >
+<remap from="image" to="/camera/markedImage" /> 
+</node>
+<!--<node pkg="rviz" type="rviz" name="rviz" />-->
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+<!--<node pkg="uav_pose" type="menu" name="menu" output="screen" />-->
+<!--<node pkg="qgrnd" type="qgrnd" name="qgrnd" output="screen" />-->
+
+<node pkg="uav_pose" type="dji_sdk_control" name="dji_sdk_control" output="screen">
+	</node>
+
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" env-loader="/home/ubuntu/catkin_ws/src/uav_pose/config/ric_env.sh" default="false" />
+
+
+<arg name="device" default="/dev/video0" />  
+<node  machine="tk1" name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="log" >
+	<param name="video_device" value="/dev/video0" />
+	<param name="image_width" value="640" />
+	<param name="image_height" value="480" />
+	<param name="pixel_format" value="mjpeg" />
+	<param name="camera_frame_id" value="usb_cam" />
+</node>
+
+
+<remap from="/camera/image" to="/usb_cam/image_raw"/>
+<!--<node machine="tk1" pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />-->
+<node machine="tk1" pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+<node machine="tk1" pkg="dji_sdk" type="dji_sdk_node" name="dji_sdk" output="screen">
+	<!-- node parameters -->
+	<param name="serial_name" type="string" value="/dev/ttyUSB0"/>
+	<param name="baud_rate" type="int" value="115200"/>
+	<param name="app_id" type="int" value="1026529"/>
+	<param name="app_version" type="int" value="1"/>
+	<param name="app_bundle_id" type="string" value="Welcome to use dji-sdk"/>
+	<param name="enc_key" type="string" value="9fa10850de7f57344086376c59f6e910b8491419be542be4d9393a3d0725bff8"/>
+	<param name="groundstation_enable" type="int" value="1"/>
+</node>
+
+	
+<arg name="fcu_url" default="/dev/ttyACM0:57600" />
+<arg name="gcs_url" default="" />
+<arg name="tgt_system" default="1" />
+<arg name="tgt_component" default="1" />
+<arg name="log_output" default="screen" />
+
+<node machine="tk1" pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="$(arg log_output)">
+	<param name="fcu_url" value="$(arg fcu_url)" />
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="$(arg tgt_system)" />
+	<param name="target_component_id" value="$(arg tgt_component)" />
+
+	<!-- load blacklist, config -->
+	<rosparam command="load" file="$(find mavros)/launch/apm_pluginlists.yaml" />
+	<rosparam command="load" file="$(find mavros)/launch/apm_config.yaml" />
+</node>
+<!--<node machine="tk1" pkg="uav_pose" type="mavStreamRate" name="mavrate" />-->
+</launch>
+

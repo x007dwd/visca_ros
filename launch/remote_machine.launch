@@ -1,0 +1,4 @@
+<launch>
+<machine name="ubuntu1" address="192.168.1.30" user="ubuntu" password="ubuntu" env-loader="~/Documents/ROS_WS/catkin_ws/src/uav_pose/config/ric_env.sh" default="true" />
+<node name="footalker" pkg="rospy_tutorials" type="talker" />
+</launch>

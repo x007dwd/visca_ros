@@ -1,0 +1,19 @@
+<launch>
+
+<node  pkg="image_view" type="image_view" name="imageshow" >
+<remap from="image" to="/camera/markedImage" /> 
+</node>
+<node pkg="rviz" type="rviz" name="rviz" />
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+<node pkg="uav_pose" type="menu" name="menu" output="screen" />
+<node pkg="qgrnd" type="qgrnd" name="qgrnd" output="screen" />
+
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" env-loader="/home/ubuntu/catkin_ws/src/uav_pose/config/ric_env.sh" default="false" />
+
+<node machine="tk1" pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />
+<node machine="tk1" pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+<node machine="tk1" pkg="uav_pose" type="GimbalControl" name="gimbalControl" output="screen" args ="/dev/ttyUSB0 115200" />
+<include file="$(find dji_sdk)/launch/sdk_manifold.launch" />
+
+</launch>
+

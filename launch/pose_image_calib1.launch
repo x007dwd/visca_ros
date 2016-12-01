@@ -1,0 +1,32 @@
+<launch>
+
+<node  pkg="image_view" type="image_view" name="imageshow" >
+<remap from="image" to="/camera/markedImage" />
+</node>
+<!--<node pkg="rviz" type="rviz" name="rviz" />-->
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+<node pkg="uav_pose" type="menu" name="menu" output="screen" />
+<node pkg="camera_calibration" type="cameracalibrator.py" name="calib" args="--size 9x6 --square 0.03 image:=/camera/image" output="screen" />
+<!--<node pkg="qgrnd" type="qgrnd" name="qgrnd" output="screen" />-->
+
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" env-loader="/home/ubuntu/catkin_ws/src/uav_pose/config/ric_env.sh" default="false" />
+
+
+<arg name="device" default="/dev/video0" />
+<node  machine="tk1" name="usb_cam" pkg="uav_pose" type="my_publisher" output="log"  args="0">
+</node>
+
+<!--<node machine="tk1" pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />-->
+<node machine="tk1" pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+<node machine="tk1" pkg="uav_pose" type="GimbalControl" name="gimbalControl" output="screen" args ="/dev/ttyUSB0 115200" />
+<node machine="tk1" pkg="dji_sdk" type="dji_sdk_node" name="dji_sdk" output="screen">
+	<!-- node parameters -->
+	<param name="serial_name" type="string" value="/dev/ttyUSB1"/>
+	<param name="baud_rate" type="int" value="115200"/>
+	<param name="app_id" type="int" value="1026529"/>
+	<param name="app_version" type="int" value="1"/>
+	<param name="app_bundle_id" type="string" value="Welcome to use dji-sdk"/>
+	<param name="enc_key" type="string" value="9fa10850de7f57344086376c59f6e910b8491419be542be4d9393a3d0725bff8"/>
+	<param name="groundstation_enable" type="int" value="1"/>
+</node>
+</launch>

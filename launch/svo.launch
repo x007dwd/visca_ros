@@ -1,0 +1,31 @@
+<launch>
+
+<node pkg="rviz" type="rviz" name="rviz" />
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" env-loader="/home/ubuntu/catkin_ws/src/uav_pose/config/ric_env.sh" default="false" />
+
+
+
+    <arg name="device" default="/dev/video0" />
+    <node  machine="tk1" name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="log" >
+        <param name="video_device" value="/dev/video0" />
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="mjpeg" />
+        <param name="camera_frame_id" value="camera" />
+    </node>
+    <node machine="tk1" pkg="svo_ros" type="vo" name="svo" clear_params="true" output="screen">
+
+        <!-- Camera topic to subscribe to -->
+        <param name="cam_topic" value="/camera/image_raw" type="str" />
+
+        <!-- Camera calibration file -->
+        <rosparam file="$(find svo_ros)/param/camera_atan.yaml" />
+
+        <!-- Default parameter settings: choose between vo_fast and vo_accurate -->
+        <rosparam file="$(find svo_ros)/param/vo_fast.yaml" />
+
+    </node>
+
+</launch>

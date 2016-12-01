@@ -1,0 +1,12 @@
+<launch>
+<!-- <machine name="ubuntu1" address="192.168.1.30" user="ubuntu" password="ubuntu" default="true" /> -->
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" password="ubuntu" env-loader="$(find uav_pose)/config/ric_env.sh" default="true" />
+
+<node  pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />
+<node  pkg="uav_pose" type="menu" name="menu" output="screen" />
+<node  pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+<node  pkg="uav_pose" type="GimbalControl" name="gimbalControl" output="screen" args ="/dev/ttyUSB0 115200" />
+<include  file="$(find dji_sdk)/launch/sdk_manifold.launch" />
+</launch>
+
+

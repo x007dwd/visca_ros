@@ -1,0 +1,20 @@
+<launch>
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+<arg name="fcu_url" default="/dev/ttyACM0:57600" />
+<arg name="gcs_url" default="" />
+<arg name="tgt_system" default="1" />
+<arg name="tgt_component" default="1" />
+<arg name="log_output" default="screen" />
+
+<node pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="$(arg log_output)">
+	<param name="fcu_url" value="$(arg fcu_url)" />
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="$(arg tgt_system)" />
+	<param name="target_component_id" value="$(arg tgt_component)" />
+
+	<!-- load blacklist, config -->
+	<rosparam command="load" file="$(find mavros)/launch/apm_pluginlists.yaml" />
+	<rosparam command="load" file="$(find mavros)/launch/apm_config.yaml" />
+</node>
+<!--<node machine="tk1" pkg="uav_pose" type="mavStreamRate" name="mavrate" />-->
+</launch>

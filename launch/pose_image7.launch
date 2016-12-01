@@ -1,0 +1,40 @@
+<launch>
+<node  pkg="image_view" type="image_view" name="imageshow" >
+<remap from="image" to="/camera/markedImage" />
+</node>
+<!--<node pkg="rviz" type="rviz" name="rviz" />-->
+<node pkg="rqt_topic" type="rqt_topic" name="rqt_monitor"/>
+<!--<node pkg="uav_pose" type="menu" name="menu" output="screen" />-->
+<!--<node pkg="qgrnd" type="qgrnd" name="qgrnd" output="screen" />-->
+<node pkg="rviz" type="rviz" name="visualize" args="-d $(find svo_ros)/rviz_config.rviz" />
+
+<machine name="tk1" address="tegra-ubuntu" user="ubuntu" env-loader="/home/ubuntu/catkin_ws/src/uav_pose/config/ric_env.sh" default="false" />
+
+
+<arg name="device" default="/dev/video0" />
+<node  machine="tk1" name="usb_cam" pkg="uav_pose" type="my_publisher" output="log" args="0" >
+</node>
+
+
+<!--<remap from="/camera/image" to="/usb_cam/image_raw"/>-->
+<!--<node machine="tk1" pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />-->
+<node machine="tk1" pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+
+<arg name="fcu_url" default="/dev/ttyACM0:57600" />
+<arg name="gcs_url" default="" />
+<arg name="tgt_system" default="1" />
+<arg name="tgt_component" default="1" />
+<arg name="log_output" default="screen" />
+
+<node machine="tk1" pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="$(arg log_output)">
+	<param name="fcu_url" value="$(arg fcu_url)" />
+	<param name="gcs_url" value="$(arg gcs_url)" />
+	<param name="target_system_id" value="$(arg tgt_system)" />
+	<param name="target_component_id" value="$(arg tgt_component)" />
+
+	<!-- load blacklist, config -->
+	<rosparam command="load" file="$(find mavros)/launch/apm_pluginlists.yaml" />
+	<rosparam command="load" file="$(find mavros)/launch/apm_config.yaml" />
+</node>
+<!--<node machine="tk1" pkg="uav_pose" type="mavStreamRate" name="mavrate" />-->
+</launch>
