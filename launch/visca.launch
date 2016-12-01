@@ -1,0 +1,6 @@
+<launch>
+	<node pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />
+	<node pkg="visca" type="visca_node" name="visca_ctrl" output="screen" args ="/dev/ttyUSB0" />
+	<node pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+	<include file="$(find mavros)/launch/apm.launch" />
+</launch>

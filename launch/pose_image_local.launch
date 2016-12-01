@@ -1,0 +1,8 @@
+<launch>
+	<node pkg="uav_pose" type="my_publisher" name="videoRead" output="screen" args = "0" />
+	<node pkg="uav_pose" type="menu" name="menu" output="screen" />
+	<node pkg="uav_pose" type="PattnRecg" name="pattrnRecg" output="screen" />
+	<node pkg="uav_pose" type="my_subscriber" name="videoShow" output="screen"/> 
+	<node pkg="uav_pose" type="GimbalControl" name="gimbalControl" output="screen" args ="/dev/ttyUSB0 115200"/>
+	<include file="$(find dji_sdk)/launch/sdk_manifold.launch" />
+</launch>
